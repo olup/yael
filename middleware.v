@@ -1,4 +1,4 @@
-module via
+module yael
 
 interface Middleware {
 	handle(req Req, res Res) ?(Req, Res)

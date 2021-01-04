@@ -1,7 +1,7 @@
 // Copyright (c) 2019-2020 Alexander Medvednikov. All rights reserved.
 // Use of this source code is governed by an MIT license
 // that can be found in the LICENSE file.
-module via
+module yael
 
 import io
 import net
@@ -98,8 +98,8 @@ fn handle_http_connection(mut s Server, mut conn net.TcpConn) {
 		status: 200
 		headers: {
 			'Content-Type': 'text/plain'
-			'Server':       'Via'
-			'X-Powered-By': 'Via'
+			'Server':       'yael'
+			'X-Powered-By': 'yael'
 		}
 		body: 'Hello world !'
 		connection: conn
