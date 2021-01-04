@@ -4,7 +4,7 @@ interface Middleware {
 	handle(req Req, res Res) ?(Req, Res)
 }
 
-type Callback = fn (req Req, res Res) ?(Req, Res)
+type Callback_signature = fn (req Req, res Res) ?(Req, Res)
 
 // Method middleware
 struct Method {
@@ -44,23 +44,23 @@ pub fn route(route string) Route {
 	return mdlw
 }
 
-// Execute Middleware
-struct Execute {
+// Callback Middleware
+struct Callback {
 	callback fn (Req, Res) ?(Req, Res)
 }
 
-pub fn (middleware Execute) handle(req Req, res Res) ?(Req, Res) {
+pub fn (middleware Callback) handle(req Req, res Res) ?(Req, Res) {
 	return middleware.callback(req, res)
 }
 
-pub fn execute(callback fn (Req, Res) ?(Req, Res)) Execute {
-	return Execute{
+pub fn callback(callback fn (Req, Res) ?(Req, Res)) Callback {
+	return Callback{
 		callback: callback
 	}
 }
 
 // Chain Middleware
-struct Chain {
+pub struct Chain {
 pub mut:
 	name        string
 	middlewares []&Middleware
@@ -85,17 +85,42 @@ pub fn (mut chainer Chain) use(m &Middleware) {
 	chainer.middlewares << m
 }
 
+pub fn (mut chainer Chain) get(route_path string, callback fn (Req, Res) ?(Req, Res)) {
+	chainer.use(get(route_path, callback))
+}
+
 // shortcuts
-pub fn get(route_path string, callback fn (Req, Res) ?(Req, Res)) &Chain {
+pub fn add_route_callback(method string,route_path string, callback fn (Req, Res) ?(Req, Res)) &Chain {
 	mut new_chain := &Chain{}
 	new_chain.middlewares << &Method{
-		method: 'GET'
+		method: method
 	}
 	new_chain.middlewares << &Route{
 		route: route_path
 	}
-	new_chain.middlewares << &Execute{
+	new_chain.middlewares << &Callback{
 		callback: callback
 	}
 	return new_chain
+}
+
+// shortcuts
+pub fn get(route_path string, callback fn (Req, Res) ?(Req, Res)) &Chain {
+	return add_route_callback("GET", route_path, callback)
+}
+
+pub fn post(route_path string, callback fn (Req, Res) ?(Req, Res)) &Chain {
+	return add_route_callback("POST", route_path, callback)
+}
+
+pub fn put(route_path string, callback fn (Req, Res) ?(Req, Res)) &Chain {
+	return add_route_callback("PUT", route_path, callback)
+}
+
+pub fn patch(route_path string, callback fn (Req, Res) ?(Req, Res)) &Chain {
+	return add_route_callback("PATCH", route_path, callback)
+}
+
+pub fn delete(route_path string, callback fn (Req, Res) ?(Req, Res)) &Chain {
+	return add_route_callback("DELETE", route_path, callback)
 }

@@ -16,15 +16,20 @@ import yael
 fn main() {
 	mut app := yael.create_server()
 
-	// A route. Yael.get is a helper function that actually adds a Chain middleware
-	// with a Method middleware, a Route middleware and an Callback middleware
-	app.router.use(yael.get('/hello/:bar', fn (req yael.Req, res yael.Res) ?(yael.Req, yael.Res) {
-		name := req.params['bar']
+	// A route. The server has a router (it's a Chain middleware itself). router.get is a helper function that
+	// actually adds a Chain middleware with a Method middleware, a Route middleware and an Callback
+	// middleware
+	app.router.get('/hello/:name', fn (req yael.Req, res yael.Res) ?(yael.Req, yael.Res) {
+		name := req.params['name']
 		res.json('{"message" : "hello dear $name"}')
-	}))
+	})
 
-    // Catch-all 404 route
-	app.router.use(yael.execute(fn (req yael.Req, res yael.Res) ?(yael.Req, yael.Res) {
+	app.router.get('/healthcheck', fn (req yael.Req, res yael.Res) ?(yael.Req, yael.Res) {
+		res.status(202).json('{"message" : "Ok"}')
+	})
+
+    // Catch-all 404 route : yael.callback is a general-puropose middleware that executes a callback
+	app.router.use(yael.callback(fn (req yael.Req, res yael.Res) ?(yael.Req, yael.Res) {
 		res.status(404).text('404 : cannot $req.method $req.path')
 	}))
 
