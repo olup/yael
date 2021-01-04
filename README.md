@@ -10,7 +10,7 @@ Middlewares are executed one by one in the queue and pass on the request and the
 
 Quick example :
 
-```
+```v
 import yael
 
 fn main() {
