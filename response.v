@@ -30,7 +30,11 @@ fn (res Res) send_response() {
 		sb.write('$header_name: $header_value$separator')
 	}
 	sb.write('Content-Length: $res.body.len${separator}Connection: close$separator$separator')
-	sb.write(res.body)
+	sb.write(if res.body == '' {
+		statuscode_msg
+	} else {
+		res.body
+	})
 	s := sb.str()
 	defer {
 		s.free()

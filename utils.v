@@ -5,7 +5,6 @@ import net
 fn match_routes(route_one string, route_two string) ?map[string]string {
 	route_one_tokens := route_one.split('/')
 	route_two_tokens := route_two.split('/')
-
 	mut matchs := map[string]string{}
 	for index, token in route_one_tokens {
 		if route_two_tokens.len < index + 1 {

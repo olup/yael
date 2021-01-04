@@ -6,7 +6,6 @@ module yael
 import io
 import net
 import net.http
-import strings
 import time
 
 const (
@@ -43,7 +42,6 @@ fn handle_http_connection(mut s Server, mut conn net.TcpConn) {
 		conn.close() or { }
 	}
 	mut reader := io.new_buffered_reader(reader: io.make_reader(conn))
-	page_gen_start := time.ticks()
 	first_line := reader.read_line() or {
 		println('Failed first_line')
 		return
